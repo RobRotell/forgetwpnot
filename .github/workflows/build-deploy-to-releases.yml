@@ -22,6 +22,9 @@ jobs:
       - name: Install npm files
         run: npm install
 
+      - name: Install npm files
+        run: ls -hal
+
       - name: Build Firefox extension
         run: web-ext sign --source-dir="src" --artifacts-dir="build" --ignore-files="src/src/*" --api-key=${{ secrets.MOZ_API_KEY }} --api-secret=${{ secrets.MOZ_API_SECRET }} --channel=unlisted --verbose --no-config-discovery
 
