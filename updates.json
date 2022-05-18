@@ -1,0 +1,12 @@
+{
+	"addons": {
+		"{b475ab3f-e1ad-4681-9e96-365669df08ef}": {
+			"updates": [
+				{
+					"version": "0.0.1",
+					"update_link": "https://example.com/addon-0.1.xpi"
+				}
+			]
+		}
+	}
+}

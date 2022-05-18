@@ -1,0 +1,38 @@
+{
+	"manifest_version": 2,
+	"name": "Forget WP Not",
+	"author": "Rob Rotell",
+	"homepage_url": "https://robrotell.dev",
+	"version": "0.0.6",
+	"version_name": "0.0.6",
+	"description": "I've made a huge mistake. I logged into WP without clicking \"Remember me.\"",
+	"content_security_policy": "script-src 'self'; object-src 'self'",
+	"icons": {
+		"48": "public/img/icon-48.png",
+		"96": "public/img/icon-96.png"
+	},
+	"browser_action": {
+		"default_icon": "public/img/icon-48.png",
+		"default_title": "Forget WP Not"
+	},
+	"browser_specific_settings": {
+		"gecko": {
+			"update_url": "https://arena.robr.app/forgetwpnot/updates.json",
+			"id": "forgetwpnot@robrotell.dev"
+		},
+		"webkit": {
+			"update_url": "https://arena.robr.app/forgetwpnot/updates.json"
+		}
+	},
+	"content_scripts": [
+		{
+			"matches": [
+				"https://*/*"
+			],
+			"js": [
+				"public/js/app.js"
+			],
+			"run_at": "document_end"
+		}
+	]
+}
