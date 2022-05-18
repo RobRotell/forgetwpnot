@@ -1,0 +1,41 @@
+name: build-and-deploy-to-releases
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+    build-and-deploy-to-releases:
+      name: Build and deploy
+      runs-on: ubuntu-latest
+      steps:
+
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Get files
+        run: git checkout main
+      
+      - name: Install npm files
+        run: npm install
+
+      - name: Build Firefox extension
+        run: web-ext sign --source-dir="src" --artifacts-dir="build" --ignore-files="src/src/*" --api-key=${{ secrets.MOZ_API_KEY }} --api-secret=${{ secrets.MOZ_API_SECRET }} --channel=unlisted --verbose --no-config-discovery
+
+      - name: Install SSH key to workflow
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: ${ secrets.SSH_KNOWN_HOST }}
+      
+      - name: Add key to known_hosts
+        run: ssh-keyscan -H -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Add new release via rsync
+        run: rsync -avz -e "ssh -p ${{ secrets.SSH_PORT }}" ./build/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DROPLET_RELEASES_DIR }}/
+
+      - name: Add new update JSON
+        run: rsync -avz -e "ssh -p ${{ secrets.SSH_PORT }}" ./updates.json ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DROPLET_RELEASES_DIR }}/

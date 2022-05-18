@@ -1,0 +1,19 @@
+{
+	"name": "forget-wp-not",
+	"version": "0.0.5",
+	"description": "Simple web extension to do simple things.",
+	"scripts": {},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/RobRotell/forgetwpnot.git"
+	},
+	"author": "Rob Rotell",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/RobRotell/forgetwpnot/issues"
+	},
+	"homepage": "https://github.com/RobRotell/forgetwpnot#readme",
+	"devDependencies": {
+		"web-ext": "^6.8.0"
+	}
+}
