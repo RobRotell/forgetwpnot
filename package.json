@@ -3,7 +3,8 @@
 	"version": "0.0.7",
 	"description": "Simple web extension to do simple things.",
 	"scripts": {
-		"sign:firefox": "web-ext sign --source-dir=\"src\" --artifacts-dir=\"build\" --ignore-files=\"src/src/*\" --channel=unlisted --verbose --no-config-discovery"
+		"sign:firefox": "web-ext sign --source-dir=\"./src\" --artifacts-dir=\"./build\" --ignore-files=\"./src\" --channel=unlisted --verbose --no-config-discovery",
+		"build:firefox": "web-ext build --source-dir=\"./src\" --ignore-files=\"./src\" --overwrite-dest"
 	},
 	"repository": {
 		"type": "git",

@@ -1,44 +1,85 @@
 name: build-and-deploy-to-releases
 
 on:
-  push:
-    branches:
-      - main
+    push:
+        branches:
+            - main
 
 jobs:
     build-and-deploy-to-releases:
-      name: Build and deploy
-      runs-on: ubuntu-latest
-      steps:
+        name: Build and deploy
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v3
+          - uses: actions/setup-node@v3
+            with:
+              node-version: 16
 
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
 
-      - name: Get files
-        run: git checkout main
-      
-      - name: Install npm files
-        run: npm install
+          - name: Grab files from repo
+            run: git checkout main
 
-      - name: Install npm files
-        run: ls -hal
 
-      - name: Build Firefox extension
-        run: npm run sign:firefox -- --api-key=${{ secrets.MOZ_API_KEY }} --api-secret=${{ secrets.MOZ_API_SECRET }}
+          - name: Install npm files
+            run: npm install
 
-      - name: Install SSH key to workflow
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          known_hosts: ${ secrets.SSH_KNOWN_HOST }}
-      
-      - name: Add key to known_hosts
-        run: ssh-keyscan -H -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Add new release via rsync
-        run: rsync -avz -e "ssh -p ${{ secrets.SSH_PORT }}" ./build/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DROPLET_RELEASES_DIR }}/
+          - name: Build Firefox extension through "web-ext sign"
+            run: npm run sign:firefox -- --api-key=${{ secrets.MOZ_API_KEY }} --api-secret=${{ secrets.MOZ_API_SECRET }}
 
-      - name: Add new update JSON
-        run: rsync -avz -e "ssh -p ${{ secrets.SSH_PORT }}" ./updates.json ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DROPLET_RELEASES_DIR }}/
+
+          - name: Read manifest to get extension version
+            id: read_manifest_json
+            run: |
+                data=`cat ./src/manifest.json`
+                data="${data//'%'/'%25'}"
+                data="${data//$'\n'/'%0A'}"
+                data="${data//$'\r'/'%0D'}"
+                echo "::set-output name=MANIFESTJSON::$data"
+
+
+          - name: Capture version from manifest
+            id: capture_version
+            run: |
+                echo "::set-output name=VERSION::${{fromJson(steps.read_manifest_json.outputs.MANIFESTJSON).version}}"
+
+
+          # it'd be great if we could get this from updates.json, but I'm not comfortable enough with my bash knowledge yet
+          - name: Rename release XPI to match version
+            run: |
+              echo ${{steps.capture_version.outputs.VERSION}}
+                cd ./build
+                ls -hal
+                pwd
+                for file in *; do
+                  if [ -f $file ]; then
+                    if [[ $file == *.xpi ]]; then
+                      mv $file "./forgetwpnot-${{steps.capture_version.outputs.VERSION}}.xpi"
+                      echo $file
+                      break
+                    fi
+
+                    echo $file
+                  fi
+                done
+                ls -hal
+                cd ..
+
+
+          - name: Install SSH key to workflow
+            uses: shimataro/ssh-key-action@v2
+            with:
+              key: ${{ secrets.SSH_PRIVATE_KEY }}
+              known_hosts: ${ secrets.SSH_KNOWN_HOST }}
+
+
+          - name: Add key to known_hosts
+            run: ssh-keyscan -H -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+
+          - name: Add new release via rsync
+            run: rsync -avz -e "ssh -p ${{ secrets.SSH_PORT }}" ./build/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DROPLET_RELEASES_DIR }}/
+
+
+          - name: Add new update JSON
+            run: rsync -avz -e "ssh -p ${{ secrets.SSH_PORT }}" ./updates.json ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DROPLET_RELEASES_DIR }}/

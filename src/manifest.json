@@ -3,8 +3,7 @@
 	"name": "Forget WP Not",
 	"author": "Rob Rotell",
 	"homepage_url": "https://robrotell.dev",
-	"version": "0.0.7",
-	"version_name": "0.0.7",
+	"version": "0.0.8",
 	"description": "I've made a huge mistake. I logged into WP without clicking \"Remember me.\"",
 	"content_security_policy": "script-src 'self'; object-src 'self'",
 	"icons": {
