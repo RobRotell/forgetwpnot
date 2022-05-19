@@ -3,9 +3,17 @@
 		"{b475ab3f-e1ad-4681-9e96-365669df08ef}": {
 			"updates": [
 				{
-					"version": "0.0.1",
-					"update_link": "https://example.com/addon-0.1.xpi"
-				}
+					"version": "0.0.8",
+					"update_link": "https://arena.robr.app/forgetwpnot/releases/forgetwpnot-0.0.8.xpi"
+				},
+				{
+					"version": "0.0.9",
+					"update_link": "https://arena.robr.app/forgetwpnot/releases/forgetwpnot-0.0.9.xpi"
+				},
+				{
+					"version": "0.0.10",
+					"update_link": "https://arena.robr.app/forgetwpnot/releases/forgetwpnot-0.0.10.xpi"
+				}								
 			]
 		}
 	}
