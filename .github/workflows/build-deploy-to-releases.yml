@@ -1,9 +1,9 @@
 name: build-and-deploy-to-releases
 
 on:
-    push:
-        branches:
-            - main
+  push:
+    branches:
+      - main
 
 jobs:
     build-and-deploy-to-releases:
@@ -78,8 +78,8 @@ jobs:
 
 
           - name: Add new release via rsync
-            run: rsync -avz -e "ssh -p ${{ secrets.SSH_PORT }}" ./build/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DROPLET_RELEASES_DIR }}/
+            run: rsync -avz -e "ssh -p ${{ secrets.SSH_PORT }}" ./build/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DROPLET_BASE_DIR }}/releases/
 
 
           - name: Add new update JSON
-            run: rsync -avz -e "ssh -p ${{ secrets.SSH_PORT }}" ./updates.json ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DROPLET_RELEASES_DIR }}/
+            run: rsync -avz -e "ssh -p ${{ secrets.SSH_PORT }}" ./updates.json ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DROPLET_BASE_DIR }}/
